@@ -1,1 +1,41 @@
 .env
+# ----------------------------------------------------
+# 1. DEPENDENCIES AND BUILD ARTIFACTS
+# ----------------------------------------------------
+
+# Node modules folder (Contains all installed packages from npm install)
+/node_modules
+
+# Logs and debug files
+npm-debug.log
+yarn-error.log
+*.log
+
+# Build outputs and cache (For future use if you add a build step)
+/dist
+/build
+/tmp
+
+# ----------------------------------------------------
+# 2. SENSITIVE DATA (CRITICAL for Security)
+# ----------------------------------------------------
+
+# The .env file must NEVER be committed. 
+# It contains DB passwords and the JWT_SECRET.
+.env
+
+# ----------------------------------------------------
+# 3. ENVIRONMENT AND IDE FILES
+# ----------------------------------------------------
+
+# VS Code settings that should NOT be shared across collaborators
+.vscode/
+
+# Windows-specific system files (e.g., thumbnail cache)
+Thumbs.db
+
+# macOS system files (for cross-platform compatibility)
+.DS_Store
+
+# User-specific Git configuration files
+.git/config.local
