@@ -1,0 +1,10 @@
+.env
+# Dependencies
+/node_modules
+
+# Environmental variables (CRITICAL for security!)
+.env
+
+# Logs and build artifacts
+/logs
+/dist
