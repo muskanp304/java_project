@@ -88,4 +88,33 @@ router.delete('/:id',async (req,res)=>{
     }
 
 });
+
+// READ ONE CONTACT: GET /api/contacts/:id
+
+router.get('/:id', async (req, res) => {
+    // 1. Get the ID of the contact from the URL parameter
+    const { id } = req.params; 
+    
+    // 2. Get the ID of the logged-in user (from the middleware)
+    const userId = req.userId;
+
+    try {
+        // CRITICAL: Select by ID AND ensure ownership (user_id = $2)
+        const sql = `SELECT * FROM contacts WHERE id = $1 AND userid = $2;`;
+        
+        const result = await pool.query(sql, [id, userId]);
+        
+        if (result.rowCount === 0) {
+            // Return 404 if contact not found OR if it belongs to another user
+            return res.status(404).json({ error: "Contact not found or access denied." });
+        }
+        
+        // Return the single contact object
+        res.status(200).json(result.rows[0]);
+
+    } catch (err) {
+        console.error("Error fetching single contact:", err.message);
+        res.status(500).json({ error: 'Server error while fetching contact.' });
+    }
+});
 module.exports =router;
