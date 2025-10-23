@@ -13,7 +13,7 @@ app.use(express.urlencoded({ extended: true }));
 // Health check endpoint (important for Render)
 app.get('/health', async (req, res) => {
   try {
-    // await pool.query('SELECT 1');
+    await pool.query('SELECT 1');
     res.status(200).json({ 
       status: 'healthy', 
       database: 'connected',
