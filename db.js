@@ -1,21 +1,25 @@
-const{Pool} = require('pg');
+const { Pool } = require('pg');
 
-//New Pool instance
+// 1. Define the SSL configuration object conditionally
+const isProduction = process.env.NODE_ENV === 'production';
+
+// Use SSL only if in a production environment
+const sslConfig = isProduction ? {
+  ssl: {
+    // This setting is REQUIRED for Render and other cloud databases
+    rejectUnauthorized: false
+  }
+} : {}; 
+
+// 2. Create connection pool
 const pool = new Pool({
-    user: process.env.DB_USER,
-    host: process.env.DB_HOST || 'localhost',
-    database: process.env.DB_NAME,
-    password: process.env.DB_PASSWORD,
-    port: process.env.DB_PORT || 5432,
-});
-// Add a check to confirm the connection works
-pool.connect((err,client,release)=>{
-    if(err){
-        return console.error('Error acquiring client',err.stack);
-    }
-    console.log("Successfully connected to PostgreSQL database!");
-    release();
+  connectionString: process.env.DATABASE_URL,
+  ...sslConfig, // Spread the SSL object only if in production
+  max: 20,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 2000
 });
 
-// Export the pool so other files can use it
-module.exports= pool;
+// ... rest of your connection code ...
+
+module.exports = pool;
