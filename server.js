@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-  // Import database connection
+const pool = require('./db'); // Import database connection
 
 const app = express();
 
@@ -28,7 +28,11 @@ app.get('/health', async (req, res) => {
   }
 });
 
-const pool = require('./db');
+app.get('/', (req, res) => {
+  res.status(200).send('Contact Manager API is running!');
+});
+
+
 
 // Your API routes
 app.get('/api/test', async (req, res) => {
