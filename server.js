@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const pool = require('./db');  // Import database connection
+  // Import database connection
 
 const app = express();
 
@@ -27,6 +27,8 @@ app.get('/health', async (req, res) => {
     });
   }
 });
+
+const pool = require('./db');
 
 // Your API routes
 app.get('/api/test', async (req, res) => {
@@ -59,8 +61,11 @@ app.use((err, req, res, next) => {
 
 // Use Render's PORT environment variable
 const PORT = process.env.PORT || 5000;
+const HOST='0.0.0.0';
 
-app.listen(PORT,'0.0.0.0', () => {
+app.listen(PORT,HOST, () => {
   console.log(`Server running on port ${PORT}on host 0.0.0.0`);
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+
+  pool.query('SELECT 1').then(() => console.log('Database connection verified after startup.')).catch(e => console.error('Initial DB check failed:', e.message));
 });
