@@ -6,17 +6,24 @@ const pool = require('../db');
 const bcrypt = require('bcryptjs'); 
 const jwt = require('jsonwebtoken'); 
 
-// CRITICAL: Load and trim the secret key for use in signing
-// CRITICAL: Safely load the secret key, defaulting to an error message if undefined.
-const jwtSecret = process.env.JWT_SECRET ? process.env.JWT_SECRET.trim() : 'MISSING_JWT_SECRET';
+// CRITICAL: Load the secret key with a safe check.
+// If it's missing, use a dummy value and log a severe error.
+const rawSecret = process.env.JWT_SECRET;
+const jwtSecret = rawSecret ? rawSecret.trim() : 'MISSING_SECRET_FALLBACK';
 
-// Optional: Add a check to crash early with a meaningful error if the secret is missing
-if (jwtSecret === 'MISSING_JWT_SECRET' || jwtSecret.length < 32) {
-    console.error("FATAL ERROR: JWT_SECRET environment variable is missing or too short.");
-    // In a production app, you might crash here: process.exit(1); 
-    // For now, we'll let it run but this prevents a silent crash.
+// Add an explicit check for security and stability
+if (jwtSecret === 'MISSING_SECRET_FALLBACK' || jwtSecret.length < 16) {
+    console.error("FATAL ERROR: JWT_SECRET environment variable is invalid or missing.");
+    
+    // In a real production app, you would exit to force a crash: process.exit(1); 
+    // If you don't exit, the application might still crash when trying to use 'MISSING_SECRET_FALLBACK'
+    // in jwt.sign(), which is your 500 error.
+    
+    // To prevent the code from running with a dummy secret and causing a crash later:
+    if (jwtSecret === 'MISSING_SECRET_FALLBACK') {
+        throw new Error("JWT_SECRET is not configured.");
+    }
 }
-
 // Helper function to generate JWT
 const generateToken = (userId) => {
     // Uses the same jwtSecret for signing
