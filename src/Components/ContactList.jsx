@@ -13,8 +13,8 @@ const ContactList = ({
   onEdit,
   onBlock,
   onHide,
-  blockedContacts,
-  hiddenContacts,
+  blockedContacts = [],
+  hiddenContacts = [],
 }) => {
   const [expandedContactId, setExpandedContactId] = useState(null);
   const [menuOpen, setMenuOpen] = useState(null);

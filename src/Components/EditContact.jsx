@@ -83,8 +83,9 @@ const EditContact = ({ contact, onUpdate, onClose }) => {
           </div>
         </form>
       </div>
-    </div>
+      </div>
   );
-};
+}
+
 
 export default EditContact;

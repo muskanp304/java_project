@@ -42,7 +42,7 @@ const App = () => {
       ) : (
         <Dashboard user={currentUser} onLogout={handleLogout} />
       )}
-    </div>
+      </div>
   );
 };
 
