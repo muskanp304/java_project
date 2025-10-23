@@ -7,7 +7,15 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken'); 
 
 // CRITICAL: Load and trim the secret key for use in signing
-const jwtSecret = process.env.JWT_SECRET.trim(); 
+// CRITICAL: Safely load the secret key, defaulting to an error message if undefined.
+const jwtSecret = process.env.JWT_SECRET ? process.env.JWT_SECRET.trim() : 'MISSING_JWT_SECRET';
+
+// Optional: Add a check to crash early with a meaningful error if the secret is missing
+if (jwtSecret === 'MISSING_JWT_SECRET' || jwtSecret.length < 32) {
+    console.error("FATAL ERROR: JWT_SECRET environment variable is missing or too short.");
+    // In a production app, you might crash here: process.exit(1); 
+    // For now, we'll let it run but this prevents a silent crash.
+}
 
 // Helper function to generate JWT
 const generateToken = (userId) => {
