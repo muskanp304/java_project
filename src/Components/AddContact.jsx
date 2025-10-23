@@ -5,11 +5,8 @@ const AddContact = ({ onAdd, onClose }) => {
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [group, setGroup] = useState('');
-  const [avatar, setAvatar] = useState('');
 
-const defaultAvatar = 'https://ui-avatars.com/api/?name=Unknown&size=128&length=2&rounded=true';
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const trimmedName = name.trim();
@@ -36,38 +33,80 @@ const defaultAvatar = 'https://ui-avatars.com/api/?name=Unknown&size=128&length=
       return;
     }
 
-    onAdd({ 
-      name: trimmedName, 
-      phone: trimmedPhone, 
-      email: trimmedEmail, 
+    let location = "Unknown Location";
+    if (navigator.geolocation) {
+      await new Promise((resolve) => {
+        navigator.geolocation.getCurrentPosition((pos) => {
+          location = `Lat:${pos.coords.latitude.toFixed(2)}, Lng:${pos.coords.longitude.toFixed(2)}`;
+          resolve();
+        }, () => resolve());
+      });
+    }
+
+    const createdAt = new Date().toLocaleString();
+
+    onAdd({
+      name: trimmedName,
+      phone: trimmedPhone,
+      email: trimmedEmail,
       group,
-      avatar: avatar || defaultAvatar 
+      location,
+      createdAt,
     });
 
     setName('');
     setPhone('');
     setEmail('');
     setGroup('');
-    setAvatar('');
   };
 
   return (
-    <div className="card p-3 mb-3">
-      <h3>Add Contact</h3>
-      <form onSubmit={handleSubmit}>
-        <input className="form-control mb-2" type="text" placeholder="Name" value={name} onChange={e => setName(e.target.value)} />
-        <input className="form-control mb-2" type="text" placeholder="Phone" value={phone} onChange={e => setPhone(e.target.value)} />
-        <input className="form-control mb-2" type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
-        <select className="form-select mb-2" value={group} onChange={e => setGroup(e.target.value)}>
-          <option value="">None</option>
-          <option value="Family">Family</option>
-          <option value="Friends">Friends</option>
-          <option value="Work">Work</option>
-        </select>
-        <input className="form-control mb-2" type="text" placeholder="Avatar URL (optional)" value={avatar} onChange={e => setAvatar(e.target.value)} />
-        <button className="btn btn-success me-2" type="submit">Add</button>
-        <button className="btn btn-secondary" type="button" onClick={onClose}>Cancel</button>
-      </form>
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-container" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <h3>➕ Add New Contact</h3>
+          <button className="modal-close-btn" onClick={onClose}>✕</button>
+        </div>
+        
+        <form onSubmit={handleSubmit} className="modal-form">
+          <input 
+            className="form-control mb-3" 
+            type="text" 
+            placeholder="Full Name *" 
+            value={name} 
+            onChange={e => setName(e.target.value)} 
+          />
+          <input 
+            className="form-control mb-3" 
+            type="text" 
+            placeholder="Phone Number *" 
+            value={phone} 
+            onChange={e => setPhone(e.target.value)} 
+          />
+          <input 
+            className="form-control mb-3" 
+            type="email" 
+            placeholder="Email (optional)" 
+            value={email} 
+            onChange={e => setEmail(e.target.value)} 
+          />
+          <select 
+            className="form-select mb-3" 
+            value={group} 
+            onChange={e => setGroup(e.target.value)}
+          >
+            <option value="">Select Group (optional)</option>
+            <option value="Family">👨‍👩‍👧 Family</option>
+            <option value="Friends">👥 Friends</option>
+            <option value="Work">💼 Work</option>
+          </select>
+          
+          <div className="modal-actions">
+            <button className="btn btn-success" type="submit">💾 Save Contact</button>
+            <button className="btn btn-secondary" type="button" onClick={onClose}>Cancel</button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
