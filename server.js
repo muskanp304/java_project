@@ -5,6 +5,8 @@ const pool = require('./db'); // Import database connection
 
 const app = express();
 
+
+
 // Middleware
 app.use(cors());
 app.use(express.json());
@@ -50,7 +52,11 @@ app.get('/api/test', async (req, res) => {
 // Import and use your routes
 // const userRoutes = require('./routes/users');
 // app.use('/api/users', userRoutes);
+const authRoutes = require('./routes/authRoutes'); 
+const contactRoutes = require('./routes/contactRoutes');
 
+app.use('/auth', authRoutes);
+app.use('/api/contacts', contactRoutes);
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error('Error:', err);
